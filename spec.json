@@ -1,0 +1,146 @@
+{
+	"swagger": "2.0",
+	"info": {
+	  "title": "NotificationHubsClient",
+	  "description": "The Notification Hubs client performs operations to register and query devices, and send notifications",
+	  "version": "2020-06-01"
+	},
+  "x-ms-parameterized-host": {
+    "hostTemplate": "{namespaceBaseUrl}",
+    "useSchemePrefix": false,
+    "positionInOperation": "first",
+    "parameters": [
+      {
+        "name": "namespaceBaseUrl",
+        "description": "The namespace name, for example https://mynamespace.servicebus.windows.net.",
+        "required": true,
+        "type": "string",
+        "in": "path",
+        "x-ms-skip-url-encoding": true
+      }
+    ]
+  },
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/{hubName}/messages": {
+      "post": {
+        "operationId": "SendMessage",
+        "description": "Sends a notification to the specified targets.",
+        "consumes":[
+          "application/json",
+          "application/xml",
+          "application/octet-stream"
+        ],
+        "parameters": [
+          { "$ref": "#/parameters/MessageBodyParameter"},
+          { "$ref": "#/parameters/HubNameParameter" },
+          { "$ref": "#/parameters/ApiVersionHeaderParameter" },
+          { "$ref": "#/parameters/AuthorizationHeaderParameter" },
+          { "$ref": "#/parameters/DeviceHandleParameter" },
+          { "$ref": "#/parameters/FormatParameter" },
+          { "$ref": "#/parameters/TagsParameter" },
+          { "$ref": "#/parameters/ApiVersionParameter" },
+          { "$ref": "#/parameters/DirectSendParameter" }
+        ],
+        "responses": {
+          "201": {
+            "description": "Message successfully sent."
+          },
+          "400": {
+            "description": "The request is malformed (for example, not valid routing headers, not valid content-type, message exceeds size, bad message format)."
+          },
+          "401": {
+            "description": "Authorization failure. The access key was incorrect."
+          },
+          "403": {
+            "description": "Quota exceeded or message too large; message was rejected."
+          },
+          "404": {
+            "description": "No message branch at the URI."
+          },
+          "413": {
+            "description": "Requested entity too large. The message size cannot be over 64 Kb."
+          }
+        }
+      }
+    }
+  },
+  "parameters": {
+    "ApiVersionParameter": {
+      "description": "API Version",
+      "in": "query",
+      "name": "api-version",
+      "required": true,
+      "type": "string",
+      "enum": [ "2015-04", "2020-06" ]
+    },
+    "ApiVersionHeaderParameter": {
+      "description": "API Version",
+      "in": "header",
+      "name": "x-ms-version",
+      "required": true,
+      "type": "string",
+      "enum": [ "2015-04", "2020-06" ]
+    },
+    "AuthorizationHeaderParameter": {
+      "description": "Authorization Header value",
+      "in": "header",
+      "name": "Authorization",
+      "required": true,
+      "type": "string"
+    },
+    "DeviceHandleParameter": {
+      "description": "Device handle for the PNS",
+      "in": "header",
+      "name": "ServiceBusNotification-DeviceHandle",
+      "required": false,
+      "type": "string"
+    },
+    "DirectSendParameter": {
+      "description": "Direct Send",
+      "in": "query",
+      "name": "direct",
+      "required": false,
+      "type": "boolean"
+    },
+    "FormatParameter": {
+      "description": "Platform type for the notification",
+      "in": "header",
+      "name": "ServiceBusNotification-Format",
+      "required": true,
+      "type": "string",
+      "enum": [ "apple", "baidu", "gcm", "windows"]
+    },
+    "HubNameParameter": {
+      "description": "Notification Hub Name",
+      "in": "path",
+      "name": "hubName",
+      "required": true,
+      "type": "string"
+    },
+    "MessageBodyParameter": {
+      "description": "The notification message body",
+      "in": "body",
+      "name": "body",
+      "required": true,
+      "schema": {
+        "type": "string"
+      }
+    },
+    "TagsParameter": {
+      "description": "Notification message tags for targeting",
+      "in": "header",
+      "name": "ServiceBusNotification-Tags",
+      "required": false,
+      "type": "string"
+    }
+  }
+}
