@@ -8,23 +8,38 @@
 
 import * as coreClient from "@azure/core-client";
 import * as coreAuth from "@azure/core-auth";
-import { Enum0, Enum1, NotificationHubsClientOptionalParams } from "./models";
+import {
+  MSApiVersionType,
+  FormatParameterType,
+  NotificationHubsClientOptionalParams
+} from "./models";
 
 export class NotificationHubsClientContext extends coreClient.ServiceClient {
   hubName: string;
-  xMsVersion: Enum0;
+  xMsVersion: MSApiVersionType;
+  apiVersion: string;
+  installationId: string;
   authorization: string;
   serviceBusNotificationDeviceHandle?: string;
-  serviceBusNotificationFormat: Enum1;
+  serviceBusNotificationFormat: FormatParameterType;
   serviceBusNotificationTags?: string;
-  apiVersion: string;
   direct?: boolean;
+  apnsTopic?: string;
+  apnsPriority?: string;
+  apnsPushType?: string;
+  xWNSCachePolicy?: string;
+  xWNSPriority?: string;
+  xWNSRequestForStatus?: string;
+  xWNSTag?: string;
+  xWnsttl?: string;
+  xWNSType?: string;
 
   /**
    * Initializes a new instance of the NotificationHubsClientContext class.
    * @param credentials Subscription credentials which uniquely identify client subscription.
    * @param hubName Notification Hub Name
    * @param xMsVersion API Version
+   * @param installationId Installation ID parameter
    * @param authorization Authorization Header value
    * @param serviceBusNotificationFormat Platform type for the notification
    * @param options The parameter options
@@ -32,9 +47,10 @@ export class NotificationHubsClientContext extends coreClient.ServiceClient {
   constructor(
     credentials: coreAuth.TokenCredential,
     hubName: string,
-    xMsVersion: Enum0,
+    xMsVersion: MSApiVersionType,
+    installationId: string,
     authorization: string,
-    serviceBusNotificationFormat: Enum1,
+    serviceBusNotificationFormat: FormatParameterType,
     options?: NotificationHubsClientOptionalParams
   ) {
     if (credentials === undefined) {
@@ -45,6 +61,9 @@ export class NotificationHubsClientContext extends coreClient.ServiceClient {
     }
     if (xMsVersion === undefined) {
       throw new Error("'xMsVersion' cannot be null");
+    }
+    if (installationId === undefined) {
+      throw new Error("'installationId' cannot be null");
     }
     if (authorization === undefined) {
       throw new Error("'authorization' cannot be null");
@@ -80,6 +99,7 @@ export class NotificationHubsClientContext extends coreClient.ServiceClient {
     // Parameter assignments
     this.hubName = hubName;
     this.xMsVersion = xMsVersion;
+    this.installationId = installationId;
     this.authorization = authorization;
     this.serviceBusNotificationFormat = serviceBusNotificationFormat;
 

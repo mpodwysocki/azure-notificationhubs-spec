@@ -30,29 +30,184 @@
     "application/json"
   ],
   "paths": {
+    "/{hubName}/installations/{installationId}": {
+      "delete": {
+        "operationId": "DeleteInstallation",
+        "description": "Delete an installation by ID",
+        "parameters": [
+          { "$ref": "#/parameters/HubNameParameter" },
+          { "$ref": "#/parameters/MSVersionParameter" },
+          { "$ref": "#/parameters/ApiVersionParameter" },
+          { "$ref": "#/parameters/InstallationIdParameter" }
+        ],
+        "responses": {
+          "204": {
+            "description": "The installation was successfully deleted."
+          },
+          "400": {
+            "description": "The installation could not be created/overwritten because the request was malformed."
+          },
+          "401": {
+            "description": "Authorization failure. The access key was incorrect."
+          },
+          "403": {
+            "description": "Quota exceeded. Request rejected because registration operations rate is too high."
+          }
+        },
+        "summary": "Delete Installation",
+        "tags": [ "installations" ]
+      },
+      "get": {
+        "operationId": "GetInstallation",
+        "description": "Get an Installation by Installation ID",
+        "parameters": [
+          { "$ref": "#/parameters/HubNameParameter" },
+          { "$ref": "#/parameters/MSVersionParameter" },
+          { "$ref": "#/parameters/ApiVersionParameter" },
+          { "$ref": "#/parameters/InstallationIdParameter" },
+          { "$ref": "#/parameters/AuthorizationHeaderParameter" }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The installation was retrieved successfully.",
+            "headers": {
+              "Content-Location": {
+                "description": "The location of the installation in the format: https://{namespace}.servicebus.windows.net/{NotificationHub}/installations/<installationId>",
+                "type": "string"
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/InstallationModel"
+            }
+          },
+          "400": {
+            "description": "The installation could not be retrieved because the request was malformed."
+          },
+          "401": {
+            "description": "Authorization failure. The access key was incorrect."
+          },
+          "403": {
+            "description": "Quota exceeded. Request rejected because registration operations rate is too high."
+          },
+          "404": {
+            "description": "Installation Not Found."
+          }
+        }
+      },
+      "patch": {
+        "operationId": "PatchInstallation",
+        "description": "Azure Notification Hubs supports partial updates to an installation using the JSON-Patch standard in [RFC6902](https://tools.ietf.org/html/rfc6902).",
+        "consumes": [
+          "application/json-patch+json"
+        ],
+        "parameters": [
+          { "$ref": "#/parameters/HubNameParameter" },
+          { "$ref": "#/parameters/MSVersionParameter" },
+          { "$ref": "#/parameters/ApiVersionParameter" },
+          { "$ref": "#/parameters/InstallationIdParameter" },
+          { "$ref": "#/parameters/AuthorizationHeaderParameter" },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/InstallationPatchModel"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The installation was patched successfully"
+          },
+          "400": {
+            "description": "The installation could not be patched because the request was malformed."
+          },
+          "401": {
+            "description": "Authorization failure. The access key was incorrect."
+          },
+          "403": {
+            "description": "Quota exceeded; too many registrations in this namespace."
+          }
+        }
+      },
+      "put": {
+        "operationId": "CreateOrUpdateInstallation",
+        "description": "Creates or overwrites an installation.",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          { "$ref": "#/parameters/HubNameParameter" },
+          { "$ref": "#/parameters/MSVersionParameter" },
+          { "$ref": "#/parameters/ApiVersionParameter" },
+          { "$ref": "#/parameters/InstallationIdParameter" },
+          { "$ref": "#/parameters/AuthorizationHeaderParameter" },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/InstallationModel"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The installation was queued successfully and will be processed in the background."
+          },
+          "400": {
+            "description": "The installation could not be created/overwritten because the request was malformed."
+          },
+          "401": {
+            "description": "Authorization failure. The access key was incorrect."
+          },
+          "403": {
+            "description": "Too many installations in this namespace - Installations not created."
+          }
+        }
+      }
+    },
     "/{hubName}/messages": {
       "post": {
         "operationId": "SendMessage",
         "description": "Sends a notification to the specified targets.",
-        "consumes":[
-          "application/json",
-          "application/xml",
+        "consumes": [
+          "application/json;charset=utf-8",
+          "application/xml;charset=utf-8",
           "application/octet-stream"
         ],
         "parameters": [
           { "$ref": "#/parameters/MessageBodyParameter"},
           { "$ref": "#/parameters/HubNameParameter" },
-          { "$ref": "#/parameters/ApiVersionHeaderParameter" },
+          { "$ref": "#/parameters/MSVersionParameter" },
           { "$ref": "#/parameters/AuthorizationHeaderParameter" },
           { "$ref": "#/parameters/DeviceHandleParameter" },
           { "$ref": "#/parameters/FormatParameter" },
           { "$ref": "#/parameters/TagsParameter" },
           { "$ref": "#/parameters/ApiVersionParameter" },
-          { "$ref": "#/parameters/DirectSendParameter" }
+          { "$ref": "#/parameters/DirectSendParameter" },
+          { "$ref": "#/parameters/ApnsTopicHeader" },
+          { "$ref": "#/parameters/ApnsPriority" },
+          { "$ref": "#/parameters/ApnsPushType" },
+          { "$ref": "#/parameters/WnsCachePolicyParameter" },
+          { "$ref": "#/parameters/WnsPriorityParameter" },
+          { "$ref": "#/parameters/WnsRequestForStatusParameter" },
+          { "$ref": "#/parameters/WnsTagParameter" },
+          { "$ref": "#/parameters/WnsTtlParameter" },
+          { "$ref": "#/parameters/WnsTypeParameter" }
         ],
         "responses": {
           "201": {
-            "description": "Message successfully sent."
+            "description": "Message successfully sent.",
+            "headers": {
+              "Location": {
+                "description": "This header will contain the Notification Message ID.",
+                "type": "string"
+              }
+            }
           },
           "400": {
             "description": "The request is malformed (for example, not valid routing headers, not valid content-type, message exceeds size, bad message format)."
@@ -73,6 +228,165 @@
       }
     }
   },
+  "definitions": {
+    "InstallationModel": {
+      "type": "object",
+      "required": [
+        "installationId",
+        "platform",
+        "pushChannel"
+      ],
+      "properties": {
+        "installationId": {
+          "description": "Installation Unique Identifier",
+          "type": "string"
+        },
+        "userId": {
+          "description": "The user ID for the installation",
+          "type": "string"
+        },
+        "lastActiveOn": {
+          "description": "The date when the installation was made inactivate by the PNS.",
+          "type": "string",
+          "readOnly": true
+        },
+        "lastUpdate": {
+          "description": "Date in W3C format of last update to this installation.",
+          "type": "string",
+          "readOnly": true
+        },
+        "platform": {
+          "description": "PNS Platform for the installation",
+          "type": "string",
+          "enum": [
+            "apns",
+            "wns",
+            "gcm",
+            "baidu",
+            "adm"
+          ],
+          "x-ms-enum": {
+            "name": "PlatformType",
+            "modelAsString": true
+          }
+        },
+        "pushChannel": {
+          "description": "The unique device handle for the PNS.",
+          "type": "string"
+        },
+        "expiredPushChannel": {
+          "description": "This is true if the PNS expired the channel.",
+          "type": "boolean",
+          "readOnly": true
+        },
+        "tags": {
+          "description": "The tags for the installation for targeting",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "templates": {
+          "description": "Set of named templates associated with the installation.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/InstallationTemplateModel"
+          }
+        },
+        "secondaryTiles": {
+          "description": "Set of secondary tiles associated with the installation. Applies only to the 'wns' platform.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/InstallationSecondaryTileModel"
+          }
+        }
+      }
+    },
+    "InstallationTemplateModel": {
+      "type": "object",
+      "required": [
+        "body"
+      ],
+      "properties": {
+        "body": {
+          "description": "Template for the body of the notification.",
+          "type": "string"
+        },
+        "headers": {
+          "description": "Set of named headers associated with the template. Header values can contain template parameters.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "expiry": {
+          "description": "Template expression evaluating in W3D date format.",
+          "type": "string"
+        },
+        "tags": {
+          "description": "The tags for the installation for targeting",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      }
+    },
+    "InstallationSecondaryTileModel": {
+      "type": "object",
+      "required": [ "pushChannel" ],
+      "properties": {
+        "pushChannel": {
+          "description": "ChannelUri for the secondary tile. Applies only to the 'wns' platform.",
+          "type": "string"
+        },
+        "tags": {
+          "description": "The tags for the installation for targeting",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "templates": {
+          "description": "Set of named templates associated with the secondary tile. Applies only to the 'wns' platform.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/InstallationTemplateModel"
+          }
+        }
+      }
+    },
+    "InstallationPatchModel": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "op": {
+            "type": "string",
+            "enum": [
+              "add",
+              "remove",
+              "replace"
+            ],
+            "x-ms-enum": {
+              "name": "InstallationPatchType",
+              "modelAsString": true
+            }
+          },
+          "path": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "op",
+          "path"
+        ]
+      }
+    }
+  },
   "parameters": {
     "ApiVersionParameter": {
       "description": "API Version",
@@ -80,15 +394,34 @@
       "name": "api-version",
       "required": true,
       "type": "string",
-      "enum": [ "2015-04", "2020-06" ]
+      "enum": [
+        "2015-01",
+        "2015-04",
+        "2015-08",
+        "2016-07",
+        "2020-06"
+      ],
+      "x-ms-enum": {
+        "name": "ApiVersionType",
+        "modelAsString": true
+      }
     },
-    "ApiVersionHeaderParameter": {
+    "MSVersionParameter": {
       "description": "API Version",
       "in": "header",
       "name": "x-ms-version",
       "required": true,
       "type": "string",
-      "enum": [ "2015-04", "2020-06" ]
+      "enum": [
+        "2015-01",
+        "2015-04",
+        "2015-08",
+        "2016-07"
+      ],
+      "x-ms-enum": {
+        "name": "MSApiVersionType",
+        "modelAsString": true
+      }
     },
     "AuthorizationHeaderParameter": {
       "description": "Authorization Header value",
@@ -117,7 +450,18 @@
       "name": "ServiceBusNotification-Format",
       "required": true,
       "type": "string",
-      "enum": [ "apple", "baidu", "gcm", "windows"]
+      "enum": [ "apple", "baidu", "gcm", "windows" ],
+      "x-ms-enum": {
+        "name": "FormatParameterType",
+        "modelAsString": true
+      }
+    },
+    "InstallationIdParameter": {
+      "description": "Installation ID parameter",
+      "in": "path",
+      "name": "installationId",
+      "required": true,
+      "type": "string"
     },
     "HubNameParameter": {
       "description": "Notification Hub Name",
@@ -139,6 +483,69 @@
       "description": "Notification message tags for targeting",
       "in": "header",
       "name": "ServiceBusNotification-Tags",
+      "required": false,
+      "type": "string"
+    },
+    "ApnsTopicHeader": {
+      "description": "The apns-topic header",
+      "in": "header",
+      "name": "apns-topic",
+      "required": false,
+      "type": "string"
+    },
+    "ApnsPriority": {
+      "description": "The apns-priority header",
+      "in": "header",
+      "name": "apns-priority",
+      "required": false,
+      "type": "string"
+    },
+    "ApnsPushType": {
+      "description": "The apns-push-type header",
+      "in": "header",
+      "name": "apns-push-type",
+      "required": false,
+      "type": "string"
+    },
+    "WnsCachePolicyParameter": {
+      "description": " X-WNS-Cache-Policy header parameter",
+      "in": "header",
+      "name": "X-WNS-Cache-Policy",
+      "required": false,
+      "type": "string"
+    },
+    "WnsPriorityParameter": {
+      "description": "X-WNS-PRIORITY header parameter",
+      "in": "header",
+      "name": "X-WNS-PRIORITY",
+      "required": false,
+      "type": "string"
+    },
+    "WnsRequestForStatusParameter": {
+      "description": "X-WNS-RequestForStatus header parameter",
+      "in": "header",
+      "name": "X-WNS-RequestForStatus",
+      "required": false,
+      "type": "string"
+    },
+    "WnsTagParameter": {
+      "description": "X-WNS-Tag header parameter",
+      "in": "header",
+      "name": "X-WNS-Tag",
+      "required": false,
+      "type": "string"
+    },
+    "WnsTtlParameter": {
+      "description": "X-WNS-TTL header parameter",
+      "in": "header",
+      "name": "X-WNS-TTL",
+      "required": false,
+      "type": "string"
+    },
+    "WnsTypeParameter": {
+      "description": "X-WNS-Type header parameter",
+      "in": "header",
+      "name": "X-WNS-Type",
       "required": false,
       "type": "string"
     }

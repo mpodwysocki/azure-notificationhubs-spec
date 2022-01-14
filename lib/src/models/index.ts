@@ -8,24 +8,138 @@
 
 import * as coreClient from "@azure/core-client";
 
-/** Known values of {@link Enum0} that the service accepts. */
-export enum KnownEnum0 {
+export interface InstallationModel {
+  /** Installation Unique Identifier */
+  installationId: string;
+  /** The user ID for the installation */
+  userId?: string;
+  /**
+   * The date when the installation was made inactivate by the PNS.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly lastActiveOn?: string;
+  /**
+   * Date in W3C format of last update to this installation.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly lastUpdate?: string;
+  /** PNS Platform for the installation */
+  platform: PlatformType;
+  /** The unique device handle for the PNS. */
+  pushChannel: string;
+  /**
+   * This is true if the PNS expired the channel.
+   * NOTE: This property will not be serialized. It can only be populated by the server.
+   */
+  readonly expiredPushChannel?: boolean;
+  /** The tags for the installation for targeting */
+  tags?: string[];
+  /** Set of named templates associated with the installation. */
+  templates?: { [propertyName: string]: InstallationTemplateModel };
+  /** Set of secondary tiles associated with the installation. Applies only to the 'wns' platform. */
+  secondaryTiles?: { [propertyName: string]: InstallationSecondaryTileModel };
+}
+
+export interface InstallationTemplateModel {
+  /** Template for the body of the notification. */
+  body: string;
+  /** Set of named headers associated with the template. Header values can contain template parameters. */
+  headers?: { [propertyName: string]: string };
+  /** Template expression evaluating in W3D date format. */
+  expiry?: string;
+  /** The tags for the installation for targeting */
+  tags?: string[];
+}
+
+export interface InstallationSecondaryTileModel {
+  /** ChannelUri for the secondary tile. Applies only to the 'wns' platform. */
+  pushChannel: string;
+  /** The tags for the installation for targeting */
+  tags?: string[];
+  /** Set of named templates associated with the secondary tile. Applies only to the 'wns' platform. */
+  templates?: { [propertyName: string]: InstallationTemplateModel };
+}
+
+export interface InstallationPatchModelItem {
+  op: InstallationPatchType;
+  path: string;
+  value?: string;
+}
+
+/** Defines headers for NotificationHubsClient_getInstallation operation. */
+export interface NotificationHubsClientGetInstallationHeaders {
+  /** The location of the installation in the format: https://{namespace}.servicebus.windows.net/{NotificationHub}/installations/<installationId> */
+  contentLocation?: string;
+}
+
+/** Defines headers for NotificationHubsClient_sendMessage operation. */
+export interface NotificationHubsClientSendMessageHeaders {
+  /** This header will contain the Notification Message ID. */
+  location?: string;
+}
+
+/** Known values of {@link MSApiVersionType} that the service accepts. */
+export enum KnownMSApiVersionType {
+  TwoThousandFifteen01 = "2015-01",
   TwoThousandFifteen04 = "2015-04",
-  TwoThousandTwenty06 = "2020-06"
+  TwoThousandFifteen08 = "2015-08",
+  TwoThousandSixteen07 = "2016-07"
 }
 
 /**
- * Defines values for Enum0. \
- * {@link KnownEnum0} can be used interchangeably with Enum0,
+ * Defines values for MSApiVersionType. \
+ * {@link KnownMSApiVersionType} can be used interchangeably with MSApiVersionType,
  *  this enum contains the known values that the service supports.
  * ### Known values supported by the service
+ * **2015-01** \
  * **2015-04** \
- * **2020-06**
+ * **2015-08** \
+ * **2016-07**
  */
-export type Enum0 = string;
+export type MSApiVersionType = string;
 
-/** Known values of {@link Enum1} that the service accepts. */
-export enum KnownEnum1 {
+/** Known values of {@link PlatformType} that the service accepts. */
+export enum KnownPlatformType {
+  Apns = "apns",
+  Wns = "wns",
+  Gcm = "gcm",
+  Baidu = "baidu",
+  Adm = "adm"
+}
+
+/**
+ * Defines values for PlatformType. \
+ * {@link KnownPlatformType} can be used interchangeably with PlatformType,
+ *  this enum contains the known values that the service supports.
+ * ### Known values supported by the service
+ * **apns** \
+ * **wns** \
+ * **gcm** \
+ * **baidu** \
+ * **adm**
+ */
+export type PlatformType = string;
+
+/** Known values of {@link InstallationPatchType} that the service accepts. */
+export enum KnownInstallationPatchType {
+  Add = "add",
+  Remove = "remove",
+  Replace = "replace"
+}
+
+/**
+ * Defines values for InstallationPatchType. \
+ * {@link KnownInstallationPatchType} can be used interchangeably with InstallationPatchType,
+ *  this enum contains the known values that the service supports.
+ * ### Known values supported by the service
+ * **add** \
+ * **remove** \
+ * **replace**
+ */
+export type InstallationPatchType = string;
+
+/** Known values of {@link FormatParameterType} that the service accepts. */
+export enum KnownFormatParameterType {
   Apple = "apple",
   Baidu = "baidu",
   Gcm = "gcm",
@@ -33,8 +147,8 @@ export enum KnownEnum1 {
 }
 
 /**
- * Defines values for Enum1. \
- * {@link KnownEnum1} can be used interchangeably with Enum1,
+ * Defines values for FormatParameterType. \
+ * {@link KnownFormatParameterType} can be used interchangeably with FormatParameterType,
  *  this enum contains the known values that the service supports.
  * ### Known values supported by the service
  * **apple** \
@@ -42,23 +156,49 @@ export enum KnownEnum1 {
  * **gcm** \
  * **windows**
  */
-export type Enum1 = string;
+export type FormatParameterType = string;
 
-/** Known values of {@link Enum2} that the service accepts. */
-export enum KnownEnum2 {
+/** Known values of {@link ApiVersionType} that the service accepts. */
+export enum KnownApiVersionType {
+  TwoThousandFifteen01 = "2015-01",
   TwoThousandFifteen04 = "2015-04",
+  TwoThousandFifteen08 = "2015-08",
+  TwoThousandSixteen07 = "2016-07",
   TwoThousandTwenty06 = "2020-06"
 }
 
 /**
- * Defines values for Enum2. \
- * {@link KnownEnum2} can be used interchangeably with Enum2,
+ * Defines values for ApiVersionType. \
+ * {@link KnownApiVersionType} can be used interchangeably with ApiVersionType,
  *  this enum contains the known values that the service supports.
  * ### Known values supported by the service
+ * **2015-01** \
  * **2015-04** \
+ * **2015-08** \
+ * **2016-07** \
  * **2020-06**
  */
-export type Enum2 = string;
+export type ApiVersionType = string;
+
+/** Optional parameters. */
+export interface DeleteInstallationOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Optional parameters. */
+export interface GetInstallationOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Contains response data for the getInstallation operation. */
+export type GetInstallationResponse = NotificationHubsClientGetInstallationHeaders &
+  InstallationModel;
+
+/** Optional parameters. */
+export interface PatchInstallationOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Optional parameters. */
+export interface CreateOrUpdateInstallationOptionalParams
+  extends coreClient.OperationOptions {}
 
 /** Optional parameters. */
 export interface SendMessage$binaryOptionalParams
@@ -68,17 +208,38 @@ export interface SendMessage$binaryOptionalParams
 export interface SendMessage$jsonOptionalParams
   extends coreClient.OperationOptions {}
 
+/** Contains response data for the sendMessage operation. */
+export type SendMessageResponse = NotificationHubsClientSendMessageHeaders;
+
 /** Optional parameters. */
 export interface NotificationHubsClientOptionalParams
   extends coreClient.ServiceClientOptions {
+  /** Api Version */
+  apiVersion?: string;
   /** Device handle for the PNS */
   serviceBusNotificationDeviceHandle?: string;
   /** Notification message tags for targeting */
   serviceBusNotificationTags?: string;
-  /** Api Version */
-  apiVersion?: string;
   /** Direct Send */
   direct?: boolean;
+  /** The apns-topic header */
+  apnsTopic?: string;
+  /** The apns-priority header */
+  apnsPriority?: string;
+  /** The apns-push-type header */
+  apnsPushType?: string;
+  /**  X-WNS-Cache-Policy header parameter */
+  xWNSCachePolicy?: string;
+  /** X-WNS-PRIORITY header parameter */
+  xWNSPriority?: string;
+  /** X-WNS-RequestForStatus header parameter */
+  xWNSRequestForStatus?: string;
+  /** X-WNS-Tag header parameter */
+  xWNSTag?: string;
+  /** X-WNS-TTL header parameter */
+  xWnsttl?: string;
+  /** X-WNS-Type header parameter */
+  xWNSType?: string;
   /** Overrides client endpoint. */
   endpoint?: string;
 }

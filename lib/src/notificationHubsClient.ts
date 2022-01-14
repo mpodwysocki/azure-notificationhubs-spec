@@ -10,13 +10,22 @@ import * as coreClient from "@azure/core-client";
 import * as coreRestPipeline from "@azure/core-rest-pipeline";
 import * as coreAuth from "@azure/core-auth";
 import * as Parameters from "./models/parameters";
+import * as Mappers from "./models/mappers";
 import { NotificationHubsClientContext } from "./notificationHubsClientContext";
 import {
   NotificationHubsClientOptionalParams,
-  Enum0,
-  Enum1,
+  MSApiVersionType,
+  FormatParameterType,
+  DeleteInstallationOptionalParams,
+  GetInstallationOptionalParams,
+  GetInstallationResponse,
+  InstallationPatchModelItem,
+  PatchInstallationOptionalParams,
+  InstallationModel,
+  CreateOrUpdateInstallationOptionalParams,
   SendMessage$binaryOptionalParams,
-  SendMessage$jsonOptionalParams
+  SendMessage$jsonOptionalParams,
+  SendMessageResponse
 } from "./models";
 
 export class NotificationHubsClient extends NotificationHubsClientContext {
@@ -25,6 +34,7 @@ export class NotificationHubsClient extends NotificationHubsClientContext {
    * @param credentials Subscription credentials which uniquely identify client subscription.
    * @param hubName Notification Hub Name
    * @param xMsVersion API Version
+   * @param installationId Installation ID parameter
    * @param authorization Authorization Header value
    * @param serviceBusNotificationFormat Platform type for the notification
    * @param options The parameter options
@@ -32,18 +42,85 @@ export class NotificationHubsClient extends NotificationHubsClientContext {
   constructor(
     credentials: coreAuth.TokenCredential,
     hubName: string,
-    xMsVersion: Enum0,
+    xMsVersion: MSApiVersionType,
+    installationId: string,
     authorization: string,
-    serviceBusNotificationFormat: Enum1,
+    serviceBusNotificationFormat: FormatParameterType,
     options?: NotificationHubsClientOptionalParams
   ) {
     super(
       credentials,
       hubName,
       xMsVersion,
+      installationId,
       authorization,
       serviceBusNotificationFormat,
       options
+    );
+  }
+
+  /**
+   * Delete an installation by ID
+   * @param namespaceBaseUrl The namespace name, for example https://mynamespace.servicebus.windows.net.
+   * @param options The options parameters.
+   */
+  deleteInstallation(
+    namespaceBaseUrl: string,
+    options?: DeleteInstallationOptionalParams
+  ): Promise<void> {
+    return this.sendOperationRequest(
+      { namespaceBaseUrl, options },
+      deleteInstallationOperationSpec
+    );
+  }
+
+  /**
+   * Get an Installation by Installation ID
+   * @param namespaceBaseUrl The namespace name, for example https://mynamespace.servicebus.windows.net.
+   * @param options The options parameters.
+   */
+  getInstallation(
+    namespaceBaseUrl: string,
+    options?: GetInstallationOptionalParams
+  ): Promise<GetInstallationResponse> {
+    return this.sendOperationRequest(
+      { namespaceBaseUrl, options },
+      getInstallationOperationSpec
+    );
+  }
+
+  /**
+   * Azure Notification Hubs supports partial updates to an installation using the JSON-Patch standard in
+   * [RFC6902](https://tools.ietf.org/html/rfc6902).
+   * @param namespaceBaseUrl The namespace name, for example https://mynamespace.servicebus.windows.net.
+   * @param body Array of InstallationPatchModelItem
+   * @param options The options parameters.
+   */
+  patchInstallation(
+    namespaceBaseUrl: string,
+    body: InstallationPatchModelItem[],
+    options?: PatchInstallationOptionalParams
+  ): Promise<void> {
+    return this.sendOperationRequest(
+      { namespaceBaseUrl, body, options },
+      patchInstallationOperationSpec
+    );
+  }
+
+  /**
+   * Creates or overwrites an installation.
+   * @param namespaceBaseUrl The namespace name, for example https://mynamespace.servicebus.windows.net.
+   * @param body
+   * @param options The options parameters.
+   */
+  createOrUpdateInstallation(
+    namespaceBaseUrl: string,
+    body: InstallationModel,
+    options?: CreateOrUpdateInstallationOptionalParams
+  ): Promise<void> {
+    return this.sendOperationRequest(
+      { namespaceBaseUrl, body, options },
+      createOrUpdateInstallationOperationSpec
     );
   }
 
@@ -59,7 +136,7 @@ export class NotificationHubsClient extends NotificationHubsClientContext {
     contentType: "application/octet-stream",
     body: coreRestPipeline.RequestBodyType,
     options?: SendMessage$binaryOptionalParams
-  ): Promise<void>;
+  ): Promise<SendMessageResponse>;
   /**
    * Sends a notification to the specified targets.
    * @param namespaceBaseUrl The namespace name, for example https://mynamespace.servicebus.windows.net.
@@ -69,10 +146,10 @@ export class NotificationHubsClient extends NotificationHubsClientContext {
    */
   sendMessage(
     namespaceBaseUrl: string,
-    contentType: "application/json",
+    contentType: "application/json;charset=utf-8",
     body: string,
     options?: SendMessage$jsonOptionalParams
-  ): Promise<void>;
+  ): Promise<SendMessageResponse>;
   /**
    * Sends a notification to the specified targets.
    * @param args Includes all the parameters for this operation.
@@ -85,8 +162,13 @@ export class NotificationHubsClient extends NotificationHubsClientContext {
           coreRestPipeline.RequestBodyType,
           SendMessage$binaryOptionalParams?
         ]
-      | [string, "application/json", string, SendMessage$jsonOptionalParams?]
-  ): Promise<void> {
+      | [
+          string,
+          "application/json;charset=utf-8",
+          string,
+          SendMessage$jsonOptionalParams?
+        ]
+  ): Promise<SendMessageResponse> {
     let operationSpec: coreClient.OperationSpec;
     let operationArguments: coreClient.OperationArguments;
     let options;
@@ -99,7 +181,7 @@ export class NotificationHubsClient extends NotificationHubsClientContext {
         options: args[3]
       };
       options = args[3];
-    } else if (args[1] === "application/json") {
+    } else if (args[1] === "application/json;charset=utf-8") {
       operationSpec = sendMessage$jsonOperationSpec;
       operationArguments = {
         namespaceBaseUrl: args[0],
@@ -118,22 +200,117 @@ export class NotificationHubsClient extends NotificationHubsClientContext {
   }
 }
 // Operation Specifications
-const serializer = coreClient.createSerializer({}, /* isXml */ false);
+const serializer = coreClient.createSerializer(Mappers, /* isXml */ false);
 
+const deleteInstallationOperationSpec: coreClient.OperationSpec = {
+  path: "/{hubName}/installations/{installationId}",
+  httpMethod: "DELETE",
+  responses: { 204: {}, 400: {}, 401: {}, 403: {} },
+  queryParameters: [Parameters.apiVersion],
+  urlParameters: [
+    Parameters.namespaceBaseUrl,
+    Parameters.hubName,
+    Parameters.installationId
+  ],
+  headerParameters: [Parameters.xMsVersion],
+  serializer
+};
+const getInstallationOperationSpec: coreClient.OperationSpec = {
+  path: "/{hubName}/installations/{installationId}",
+  httpMethod: "GET",
+  responses: {
+    200: {
+      bodyMapper: Mappers.InstallationModel,
+      headersMapper: Mappers.NotificationHubsClientGetInstallationHeaders
+    },
+    400: {},
+    401: {},
+    403: {},
+    404: {}
+  },
+  queryParameters: [Parameters.apiVersion],
+  urlParameters: [
+    Parameters.namespaceBaseUrl,
+    Parameters.hubName,
+    Parameters.installationId
+  ],
+  headerParameters: [
+    Parameters.xMsVersion,
+    Parameters.accept,
+    Parameters.authorization
+  ],
+  serializer
+};
+const patchInstallationOperationSpec: coreClient.OperationSpec = {
+  path: "/{hubName}/installations/{installationId}",
+  httpMethod: "PATCH",
+  responses: { 204: {}, 400: {}, 401: {}, 403: {} },
+  requestBody: Parameters.body,
+  queryParameters: [Parameters.apiVersion],
+  urlParameters: [
+    Parameters.namespaceBaseUrl,
+    Parameters.hubName,
+    Parameters.installationId
+  ],
+  headerParameters: [
+    Parameters.xMsVersion,
+    Parameters.authorization,
+    Parameters.contentType
+  ],
+  mediaType: "json",
+  serializer
+};
+const createOrUpdateInstallationOperationSpec: coreClient.OperationSpec = {
+  path: "/{hubName}/installations/{installationId}",
+  httpMethod: "PUT",
+  responses: { 200: {}, 400: {}, 401: {}, 403: {} },
+  requestBody: Parameters.body1,
+  queryParameters: [Parameters.apiVersion],
+  urlParameters: [
+    Parameters.namespaceBaseUrl,
+    Parameters.hubName,
+    Parameters.installationId
+  ],
+  headerParameters: [
+    Parameters.xMsVersion,
+    Parameters.authorization,
+    Parameters.contentType1
+  ],
+  mediaType: "json",
+  serializer
+};
 const sendMessage$binaryOperationSpec: coreClient.OperationSpec = {
   path: "/{hubName}/messages",
   httpMethod: "POST",
-  responses: { 201: {}, 400: {}, 401: {}, 403: {}, 404: {}, 413: {} },
-  requestBody: Parameters.body,
+  responses: {
+    201: {
+      headersMapper: Mappers.NotificationHubsClientSendMessageHeaders
+    },
+    400: {},
+    401: {},
+    403: {},
+    404: {},
+    413: {}
+  },
+  requestBody: Parameters.body2,
   queryParameters: [Parameters.apiVersion, Parameters.direct],
   urlParameters: [Parameters.namespaceBaseUrl, Parameters.hubName],
   headerParameters: [
-    Parameters.contentType,
     Parameters.xMsVersion,
     Parameters.authorization,
+    Parameters.contentType2,
     Parameters.serviceBusNotificationDeviceHandle,
     Parameters.serviceBusNotificationFormat,
-    Parameters.serviceBusNotificationTags
+    Parameters.serviceBusNotificationTags,
+    Parameters.apnsTopic,
+    Parameters.apnsPriority,
+    Parameters.apnsPushType,
+    Parameters.xWNSCachePolicy,
+    Parameters.xWNSPriority,
+    Parameters.xWNSRequestForStatus,
+    Parameters.xWNSTag,
+    Parameters.xWnsttl,
+    Parameters.xWNSType
   ],
   mediaType: "binary",
   serializer
@@ -141,17 +318,35 @@ const sendMessage$binaryOperationSpec: coreClient.OperationSpec = {
 const sendMessage$jsonOperationSpec: coreClient.OperationSpec = {
   path: "/{hubName}/messages",
   httpMethod: "POST",
-  responses: { 201: {}, 400: {}, 401: {}, 403: {}, 404: {}, 413: {} },
-  requestBody: Parameters.body1,
+  responses: {
+    201: {
+      headersMapper: Mappers.NotificationHubsClientSendMessageHeaders
+    },
+    400: {},
+    401: {},
+    403: {},
+    404: {},
+    413: {}
+  },
+  requestBody: Parameters.body3,
   queryParameters: [Parameters.apiVersion, Parameters.direct],
   urlParameters: [Parameters.namespaceBaseUrl, Parameters.hubName],
   headerParameters: [
-    Parameters.contentType1,
     Parameters.xMsVersion,
     Parameters.authorization,
+    Parameters.contentType3,
     Parameters.serviceBusNotificationDeviceHandle,
     Parameters.serviceBusNotificationFormat,
-    Parameters.serviceBusNotificationTags
+    Parameters.serviceBusNotificationTags,
+    Parameters.apnsTopic,
+    Parameters.apnsPriority,
+    Parameters.apnsPushType,
+    Parameters.xWNSCachePolicy,
+    Parameters.xWNSPriority,
+    Parameters.xWNSRequestForStatus,
+    Parameters.xWNSTag,
+    Parameters.xWnsttl,
+    Parameters.xWNSType
   ],
   mediaType: "json",
   serializer
