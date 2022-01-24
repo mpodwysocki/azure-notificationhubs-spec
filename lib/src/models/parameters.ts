@@ -11,13 +11,18 @@ import {
   OperationParameter,
   OperationQueryParameter
 } from "@azure/core-client";
-import { InstallationModel as InstallationModelMapper } from "../models/mappers";
+import {
+  NotificationHubEntryModel as NotificationHubEntryModelMapper,
+  RegistrationEntryModel as RegistrationEntryModelMapper,
+  InstallationModel as InstallationModelMapper
+} from "../models/mappers";
 
 export const namespaceBaseUrl: OperationURLParameter = {
   parameterPath: "namespaceBaseUrl",
   mapper: {
     serializedName: "namespaceBaseUrl",
     required: true,
+    xmlName: "namespaceBaseUrl",
     type: {
       name: "String"
     }
@@ -30,6 +35,7 @@ export const hubName: OperationURLParameter = {
   mapper: {
     serializedName: "hubName",
     required: true,
+    xmlName: "hubName",
     type: {
       name: "String"
     }
@@ -41,6 +47,7 @@ export const xMsVersion: OperationParameter = {
   mapper: {
     serializedName: "x-ms-version",
     required: true,
+    xmlName: "x-ms-version",
     type: {
       name: "String"
     }
@@ -59,11 +66,12 @@ export const apiVersion: OperationQueryParameter = {
   }
 };
 
-export const installationId: OperationURLParameter = {
-  parameterPath: "installationId",
+export const authorization: OperationParameter = {
+  parameterPath: "authorization",
   mapper: {
-    serializedName: "installationId",
+    serializedName: "Authorization",
     required: true,
+    xmlName: "Authorization",
     type: {
       name: "String"
     }
@@ -71,6 +79,132 @@ export const installationId: OperationURLParameter = {
 };
 
 export const accept: OperationParameter = {
+  parameterPath: "accept",
+  mapper: {
+    defaultValue: "application/atom+xml;type=entry;charset=utf-8",
+    isConstant: true,
+    serializedName: "Accept",
+    type: {
+      name: "String"
+    }
+  }
+};
+
+export const contentType: OperationParameter = {
+  parameterPath: ["options", "contentType"],
+  mapper: {
+    defaultValue: "application/atom+xml;type=entry;charset=utf-8",
+    isConstant: true,
+    serializedName: "Content-Type",
+    type: {
+      name: "String"
+    }
+  }
+};
+
+export const body: OperationParameter = {
+  parameterPath: "body",
+  mapper: NotificationHubEntryModelMapper
+};
+
+export const accept1: OperationParameter = {
+  parameterPath: "accept",
+  mapper: {
+    defaultValue: "application/atom+xml;type=entry;charset=utf-8",
+    isConstant: true,
+    serializedName: "Accept",
+    type: {
+      name: "String"
+    }
+  }
+};
+
+export const ifMatch: OperationParameter = {
+  parameterPath: "ifMatch",
+  mapper: {
+    serializedName: "If-Match",
+    xmlName: "If-Match",
+    type: {
+      name: "String"
+    }
+  }
+};
+
+export const tag: OperationURLParameter = {
+  parameterPath: "tag",
+  mapper: {
+    serializedName: "tag",
+    required: true,
+    xmlName: "tag",
+    type: {
+      name: "String"
+    }
+  }
+};
+
+export const continuationToken: OperationQueryParameter = {
+  parameterPath: "continuationToken",
+  mapper: {
+    serializedName: "ContinuationToken",
+    xmlName: "ContinuationToken",
+    type: {
+      name: "String"
+    }
+  }
+};
+
+export const top: OperationQueryParameter = {
+  parameterPath: "top",
+  mapper: {
+    serializedName: "$top",
+    xmlName: "$top",
+    type: {
+      name: "String"
+    }
+  }
+};
+
+export const filter: OperationQueryParameter = {
+  parameterPath: "filter",
+  mapper: {
+    serializedName: "$filter",
+    xmlName: "$filter",
+    type: {
+      name: "String"
+    }
+  }
+};
+
+export const registrationId: OperationURLParameter = {
+  parameterPath: "registrationId",
+  mapper: {
+    serializedName: "registrationId",
+    required: true,
+    xmlName: "registrationId",
+    type: {
+      name: "String"
+    }
+  }
+};
+
+export const body1: OperationParameter = {
+  parameterPath: "body",
+  mapper: RegistrationEntryModelMapper
+};
+
+export const installationId: OperationURLParameter = {
+  parameterPath: "installationId",
+  mapper: {
+    serializedName: "installationId",
+    required: true,
+    xmlName: "installationId",
+    type: {
+      name: "String"
+    }
+  }
+};
+
+export const accept2: OperationParameter = {
   parameterPath: "accept",
   mapper: {
     defaultValue: "application/json",
@@ -82,67 +216,10 @@ export const accept: OperationParameter = {
   }
 };
 
-export const authorization: OperationParameter = {
-  parameterPath: "authorization",
-  mapper: {
-    serializedName: "Authorization",
-    required: true,
-    type: {
-      name: "String"
-    }
-  }
-};
-
-export const contentType: OperationParameter = {
-  parameterPath: ["options", "contentType"],
-  mapper: {
-    defaultValue: "application/json-patch+json",
-    isConstant: true,
-    serializedName: "Content-Type",
-    type: {
-      name: "String"
-    }
-  }
-};
-
-export const body: OperationParameter = {
-  parameterPath: "body",
-  mapper: {
-    serializedName: "body",
-    required: true,
-    type: {
-      name: "Sequence",
-      element: {
-        type: {
-          name: "Composite",
-          className: "InstallationPatchModelItem"
-        }
-      }
-    }
-  }
-};
-
 export const contentType1: OperationParameter = {
   parameterPath: ["options", "contentType"],
   mapper: {
-    defaultValue: "application/json",
-    isConstant: true,
-    serializedName: "Content-Type",
-    type: {
-      name: "String"
-    }
-  }
-};
-
-export const body1: OperationParameter = {
-  parameterPath: "body",
-  mapper: InstallationModelMapper
-};
-
-export const contentType2: OperationParameter = {
-  parameterPath: "contentType",
-  mapper: {
-    defaultValue: "application/octet-stream",
+    defaultValue: "application/json-patch+json",
     isConstant: true,
     serializedName: "Content-Type",
     type: {
@@ -156,13 +233,62 @@ export const body2: OperationParameter = {
   mapper: {
     serializedName: "body",
     required: true,
+    xmlName: "body",
+    xmlElementName: "InstallationPatchModelItem",
+    type: {
+      name: "Sequence",
+      element: {
+        type: {
+          name: "Composite",
+          className: "InstallationPatchModelItem"
+        }
+      }
+    }
+  }
+};
+
+export const contentType2: OperationParameter = {
+  parameterPath: ["options", "contentType"],
+  mapper: {
+    defaultValue: "application/json",
+    isConstant: true,
+    serializedName: "Content-Type",
+    type: {
+      name: "String"
+    }
+  }
+};
+
+export const body3: OperationParameter = {
+  parameterPath: "body",
+  mapper: InstallationModelMapper
+};
+
+export const contentType3: OperationParameter = {
+  parameterPath: "contentType",
+  mapper: {
+    defaultValue: "application/octet-stream",
+    isConstant: true,
+    serializedName: "Content-Type",
+    type: {
+      name: "String"
+    }
+  }
+};
+
+export const body4: OperationParameter = {
+  parameterPath: "body",
+  mapper: {
+    serializedName: "body",
+    required: true,
+    xmlName: "body",
     type: {
       name: "Stream"
     }
   }
 };
 
-export const contentType3: OperationParameter = {
+export const contentType4: OperationParameter = {
   parameterPath: "contentType",
   mapper: {
     defaultValue: "application/json;charset=utf-8",
@@ -174,11 +300,12 @@ export const contentType3: OperationParameter = {
   }
 };
 
-export const body3: OperationParameter = {
+export const body5: OperationParameter = {
   parameterPath: "body",
   mapper: {
     serializedName: "body",
     required: true,
+    xmlName: "body",
     type: {
       name: "String"
     }
@@ -189,6 +316,7 @@ export const serviceBusNotificationDeviceHandle: OperationParameter = {
   parameterPath: "serviceBusNotificationDeviceHandle",
   mapper: {
     serializedName: "ServiceBusNotification-DeviceHandle",
+    xmlName: "ServiceBusNotification-DeviceHandle",
     type: {
       name: "String"
     }
@@ -200,6 +328,7 @@ export const serviceBusNotificationFormat: OperationParameter = {
   mapper: {
     serializedName: "ServiceBusNotification-Format",
     required: true,
+    xmlName: "ServiceBusNotification-Format",
     type: {
       name: "String"
     }
@@ -210,6 +339,7 @@ export const serviceBusNotificationTags: OperationParameter = {
   parameterPath: "serviceBusNotificationTags",
   mapper: {
     serializedName: "ServiceBusNotification-Tags",
+    xmlName: "ServiceBusNotification-Tags",
     type: {
       name: "String"
     }
@@ -220,6 +350,7 @@ export const direct: OperationQueryParameter = {
   parameterPath: "direct",
   mapper: {
     serializedName: "direct",
+    xmlName: "direct",
     type: {
       name: "Boolean"
     }
@@ -230,6 +361,7 @@ export const apnsTopic: OperationParameter = {
   parameterPath: "apnsTopic",
   mapper: {
     serializedName: "apns-topic",
+    xmlName: "apns-topic",
     type: {
       name: "String"
     }
@@ -240,6 +372,7 @@ export const apnsPriority: OperationParameter = {
   parameterPath: "apnsPriority",
   mapper: {
     serializedName: "apns-priority",
+    xmlName: "apns-priority",
     type: {
       name: "String"
     }
@@ -250,6 +383,7 @@ export const apnsPushType: OperationParameter = {
   parameterPath: "apnsPushType",
   mapper: {
     serializedName: "apns-push-type",
+    xmlName: "apns-push-type",
     type: {
       name: "String"
     }
@@ -260,6 +394,7 @@ export const xWNSCachePolicy: OperationParameter = {
   parameterPath: "xWNSCachePolicy",
   mapper: {
     serializedName: "X-WNS-Cache-Policy",
+    xmlName: "X-WNS-Cache-Policy",
     type: {
       name: "String"
     }
@@ -270,6 +405,7 @@ export const xWNSPriority: OperationParameter = {
   parameterPath: "xWNSPriority",
   mapper: {
     serializedName: "X-WNS-PRIORITY",
+    xmlName: "X-WNS-PRIORITY",
     type: {
       name: "String"
     }
@@ -280,6 +416,7 @@ export const xWNSRequestForStatus: OperationParameter = {
   parameterPath: "xWNSRequestForStatus",
   mapper: {
     serializedName: "X-WNS-RequestForStatus",
+    xmlName: "X-WNS-RequestForStatus",
     type: {
       name: "String"
     }
@@ -290,6 +427,7 @@ export const xWNSTag: OperationParameter = {
   parameterPath: "xWNSTag",
   mapper: {
     serializedName: "X-WNS-Tag",
+    xmlName: "X-WNS-Tag",
     type: {
       name: "String"
     }
@@ -300,6 +438,7 @@ export const xWnsttl: OperationParameter = {
   parameterPath: "xWnsttl",
   mapper: {
     serializedName: "X-WNS-TTL",
+    xmlName: "X-WNS-TTL",
     type: {
       name: "String"
     }
@@ -310,6 +449,7 @@ export const xWNSType: OperationParameter = {
   parameterPath: "xWNSType",
   mapper: {
     serializedName: "X-WNS-Type",
+    xmlName: "X-WNS-Type",
     type: {
       name: "String"
     }

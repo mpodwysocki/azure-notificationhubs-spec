@@ -15,11 +15,17 @@ import {
 } from "./models";
 
 export class NotificationHubsClientContext extends coreClient.ServiceClient {
-  hubName: string;
+  namespaceBaseUrl: string;
   xMsVersion: MSApiVersionType;
   apiVersion: string;
-  installationId: string;
   authorization: string;
+  ifMatch?: string;
+  tag: string;
+  continuationToken?: string;
+  top?: string;
+  filter?: string;
+  registrationId: string;
+  installationId: string;
   serviceBusNotificationDeviceHandle?: string;
   serviceBusNotificationFormat: FormatParameterType;
   serviceBusNotificationTags?: string;
@@ -37,36 +43,46 @@ export class NotificationHubsClientContext extends coreClient.ServiceClient {
   /**
    * Initializes a new instance of the NotificationHubsClientContext class.
    * @param credentials Subscription credentials which uniquely identify client subscription.
-   * @param hubName Notification Hub Name
+   * @param namespaceBaseUrl The namespace name, for example https://mynamespace.servicebus.windows.net.
    * @param xMsVersion API Version
-   * @param installationId Installation ID parameter
    * @param authorization Authorization Header value
+   * @param tag The path for the tag to query
+   * @param registrationId Registration ID parameter
+   * @param installationId Installation ID parameter
    * @param serviceBusNotificationFormat Platform type for the notification
    * @param options The parameter options
    */
   constructor(
     credentials: coreAuth.TokenCredential,
-    hubName: string,
+    namespaceBaseUrl: string,
     xMsVersion: MSApiVersionType,
-    installationId: string,
     authorization: string,
+    tag: string,
+    registrationId: string,
+    installationId: string,
     serviceBusNotificationFormat: FormatParameterType,
     options?: NotificationHubsClientOptionalParams
   ) {
     if (credentials === undefined) {
       throw new Error("'credentials' cannot be null");
     }
-    if (hubName === undefined) {
-      throw new Error("'hubName' cannot be null");
+    if (namespaceBaseUrl === undefined) {
+      throw new Error("'namespaceBaseUrl' cannot be null");
     }
     if (xMsVersion === undefined) {
       throw new Error("'xMsVersion' cannot be null");
     }
-    if (installationId === undefined) {
-      throw new Error("'installationId' cannot be null");
-    }
     if (authorization === undefined) {
       throw new Error("'authorization' cannot be null");
+    }
+    if (tag === undefined) {
+      throw new Error("'tag' cannot be null");
+    }
+    if (registrationId === undefined) {
+      throw new Error("'registrationId' cannot be null");
+    }
+    if (installationId === undefined) {
+      throw new Error("'installationId' cannot be null");
     }
     if (serviceBusNotificationFormat === undefined) {
       throw new Error("'serviceBusNotificationFormat' cannot be null");
@@ -97,10 +113,12 @@ export class NotificationHubsClientContext extends coreClient.ServiceClient {
     };
     super(optionsWithDefaults);
     // Parameter assignments
-    this.hubName = hubName;
+    this.namespaceBaseUrl = namespaceBaseUrl;
     this.xMsVersion = xMsVersion;
-    this.installationId = installationId;
     this.authorization = authorization;
+    this.tag = tag;
+    this.registrationId = registrationId;
+    this.installationId = installationId;
     this.serviceBusNotificationFormat = serviceBusNotificationFormat;
 
     // Assigning values to Constant parameters

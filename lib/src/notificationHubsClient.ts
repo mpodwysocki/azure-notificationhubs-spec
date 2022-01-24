@@ -16,6 +16,26 @@ import {
   NotificationHubsClientOptionalParams,
   MSApiVersionType,
   FormatParameterType,
+  DeleteNotificationHubOptionalParams,
+  GetNotificationHubOptionalParams,
+  GetNotificationHubResponse,
+  NotificationHubEntryModel,
+  CreateOrUpdateNotificationHubOptionalParams,
+  CreateOrUpdateNotificationHubResponse,
+  GetRegistrationsByTagOptionalParams,
+  GetRegistrationsByTagResponse,
+  CreateRegistrationIdOptionalParams,
+  CreateRegistrationIdResponse,
+  GetRegistrationsOptionalParams,
+  GetRegistrationsResponse,
+  CreateRegistrationOptionalParams,
+  CreateRegistrationResponse,
+  DeleteRegistrationOptionalParams,
+  GetRegistrationOptionalParams,
+  GetRegistrationResponse,
+  RegistrationEntryModel,
+  CreateOrUpdateRegistrationOptionalParams,
+  CreateOrUpdateRegistrationResponse,
   DeleteInstallationOptionalParams,
   GetInstallationOptionalParams,
   GetInstallationResponse,
@@ -32,59 +52,219 @@ export class NotificationHubsClient extends NotificationHubsClientContext {
   /**
    * Initializes a new instance of the NotificationHubsClient class.
    * @param credentials Subscription credentials which uniquely identify client subscription.
-   * @param hubName Notification Hub Name
+   * @param namespaceBaseUrl The namespace name, for example https://mynamespace.servicebus.windows.net.
    * @param xMsVersion API Version
-   * @param installationId Installation ID parameter
    * @param authorization Authorization Header value
+   * @param tag The path for the tag to query
+   * @param registrationId Registration ID parameter
+   * @param installationId Installation ID parameter
    * @param serviceBusNotificationFormat Platform type for the notification
    * @param options The parameter options
    */
   constructor(
     credentials: coreAuth.TokenCredential,
-    hubName: string,
+    namespaceBaseUrl: string,
     xMsVersion: MSApiVersionType,
-    installationId: string,
     authorization: string,
+    tag: string,
+    registrationId: string,
+    installationId: string,
     serviceBusNotificationFormat: FormatParameterType,
     options?: NotificationHubsClientOptionalParams
   ) {
     super(
       credentials,
-      hubName,
+      namespaceBaseUrl,
       xMsVersion,
-      installationId,
       authorization,
+      tag,
+      registrationId,
+      installationId,
       serviceBusNotificationFormat,
       options
     );
   }
 
   /**
+   * Deletes a notification hub.
+   * @param hubName Notification Hub Name
+   * @param options The options parameters.
+   */
+  deleteNotificationHub(
+    hubName: string,
+    options?: DeleteNotificationHubOptionalParams
+  ): Promise<void> {
+    return this.sendOperationRequest(
+      { hubName, options },
+      deleteNotificationHubOperationSpec
+    );
+  }
+
+  /**
+   * Retrieves information about a notification hub.
+   * @param hubName Notification Hub Name
+   * @param options The options parameters.
+   */
+  getNotificationHub(
+    hubName: string,
+    options?: GetNotificationHubOptionalParams
+  ): Promise<GetNotificationHubResponse> {
+    return this.sendOperationRequest(
+      { hubName, options },
+      getNotificationHubOperationSpec
+    );
+  }
+
+  /**
+   * Create or update a notification hub.
+   * @param hubName Notification Hub Name
+   * @param body
+   * @param options The options parameters.
+   */
+  createOrUpdateNotificationHub(
+    hubName: string,
+    body: NotificationHubEntryModel,
+    options?: CreateOrUpdateNotificationHubOptionalParams
+  ): Promise<CreateOrUpdateNotificationHubResponse> {
+    return this.sendOperationRequest(
+      { hubName, body, options },
+      createOrUpdateNotificationHubOperationSpec
+    );
+  }
+
+  /**
+   * Retrieves all registrations with a specific tag.
+   * @param hubName Notification Hub Name
+   * @param options The options parameters.
+   */
+  getRegistrationsByTag(
+    hubName: string,
+    options?: GetRegistrationsByTagOptionalParams
+  ): Promise<GetRegistrationsByTagResponse> {
+    return this.sendOperationRequest(
+      { hubName, options },
+      getRegistrationsByTagOperationSpec
+    );
+  }
+
+  /**
+   * Create a registration ID
+   * @param hubName Notification Hub Name
+   * @param options The options parameters.
+   */
+  createRegistrationId(
+    hubName: string,
+    options?: CreateRegistrationIdOptionalParams
+  ): Promise<CreateRegistrationIdResponse> {
+    return this.sendOperationRequest(
+      { hubName, options },
+      createRegistrationIdOperationSpec
+    );
+  }
+
+  /**
+   * Get registrations by the specified criteria
+   * @param hubName Notification Hub Name
+   * @param options The options parameters.
+   */
+  getRegistrations(
+    hubName: string,
+    options?: GetRegistrationsOptionalParams
+  ): Promise<GetRegistrationsResponse> {
+    return this.sendOperationRequest(
+      { hubName, options },
+      getRegistrationsOperationSpec
+    );
+  }
+
+  /**
+   * Creates a registration
+   * @param hubName Notification Hub Name
+   * @param options The options parameters.
+   */
+  createRegistration(
+    hubName: string,
+    options?: CreateRegistrationOptionalParams
+  ): Promise<CreateRegistrationResponse> {
+    return this.sendOperationRequest(
+      { hubName, options },
+      createRegistrationOperationSpec
+    );
+  }
+
+  /**
+   * Deletes a registration
+   * @param hubName Notification Hub Name
+   * @param options The options parameters.
+   */
+  deleteRegistration(
+    hubName: string,
+    options?: DeleteRegistrationOptionalParams
+  ): Promise<void> {
+    return this.sendOperationRequest(
+      { hubName, options },
+      deleteRegistrationOperationSpec
+    );
+  }
+
+  /**
+   * Get a registration by registration ID
+   * @param hubName Notification Hub Name
+   * @param options The options parameters.
+   */
+  getRegistration(
+    hubName: string,
+    options?: GetRegistrationOptionalParams
+  ): Promise<GetRegistrationResponse> {
+    return this.sendOperationRequest(
+      { hubName, options },
+      getRegistrationOperationSpec
+    );
+  }
+
+  /**
+   * Create or update a registration
+   * @param hubName Notification Hub Name
+   * @param body
+   * @param options The options parameters.
+   */
+  createOrUpdateRegistration(
+    hubName: string,
+    body: RegistrationEntryModel,
+    options?: CreateOrUpdateRegistrationOptionalParams
+  ): Promise<CreateOrUpdateRegistrationResponse> {
+    return this.sendOperationRequest(
+      { hubName, body, options },
+      createOrUpdateRegistrationOperationSpec
+    );
+  }
+
+  /**
    * Delete an installation by ID
-   * @param namespaceBaseUrl The namespace name, for example https://mynamespace.servicebus.windows.net.
+   * @param hubName Notification Hub Name
    * @param options The options parameters.
    */
   deleteInstallation(
-    namespaceBaseUrl: string,
+    hubName: string,
     options?: DeleteInstallationOptionalParams
   ): Promise<void> {
     return this.sendOperationRequest(
-      { namespaceBaseUrl, options },
+      { hubName, options },
       deleteInstallationOperationSpec
     );
   }
 
   /**
    * Get an Installation by Installation ID
-   * @param namespaceBaseUrl The namespace name, for example https://mynamespace.servicebus.windows.net.
+   * @param hubName Notification Hub Name
    * @param options The options parameters.
    */
   getInstallation(
-    namespaceBaseUrl: string,
+    hubName: string,
     options?: GetInstallationOptionalParams
   ): Promise<GetInstallationResponse> {
     return this.sendOperationRequest(
-      { namespaceBaseUrl, options },
+      { hubName, options },
       getInstallationOperationSpec
     );
   }
@@ -92,60 +272,60 @@ export class NotificationHubsClient extends NotificationHubsClientContext {
   /**
    * Azure Notification Hubs supports partial updates to an installation using the JSON-Patch standard in
    * [RFC6902](https://tools.ietf.org/html/rfc6902).
-   * @param namespaceBaseUrl The namespace name, for example https://mynamespace.servicebus.windows.net.
+   * @param hubName Notification Hub Name
    * @param body Array of InstallationPatchModelItem
    * @param options The options parameters.
    */
   patchInstallation(
-    namespaceBaseUrl: string,
+    hubName: string,
     body: InstallationPatchModelItem[],
     options?: PatchInstallationOptionalParams
   ): Promise<void> {
     return this.sendOperationRequest(
-      { namespaceBaseUrl, body, options },
+      { hubName, body, options },
       patchInstallationOperationSpec
     );
   }
 
   /**
    * Creates or overwrites an installation.
-   * @param namespaceBaseUrl The namespace name, for example https://mynamespace.servicebus.windows.net.
+   * @param hubName Notification Hub Name
    * @param body
    * @param options The options parameters.
    */
   createOrUpdateInstallation(
-    namespaceBaseUrl: string,
+    hubName: string,
     body: InstallationModel,
     options?: CreateOrUpdateInstallationOptionalParams
   ): Promise<void> {
     return this.sendOperationRequest(
-      { namespaceBaseUrl, body, options },
+      { hubName, body, options },
       createOrUpdateInstallationOperationSpec
     );
   }
 
   /**
    * Sends a notification to the specified targets.
-   * @param namespaceBaseUrl The namespace name, for example https://mynamespace.servicebus.windows.net.
+   * @param hubName Notification Hub Name
    * @param contentType Upload file type
    * @param body The notification message body
    * @param options The options parameters.
    */
   sendMessage(
-    namespaceBaseUrl: string,
+    hubName: string,
     contentType: "application/octet-stream",
     body: coreRestPipeline.RequestBodyType,
     options?: SendMessage$binaryOptionalParams
   ): Promise<SendMessageResponse>;
   /**
    * Sends a notification to the specified targets.
-   * @param namespaceBaseUrl The namespace name, for example https://mynamespace.servicebus.windows.net.
+   * @param hubName Notification Hub Name
    * @param contentType Body Parameter content-type
    * @param body The notification message body
    * @param options The options parameters.
    */
   sendMessage(
-    namespaceBaseUrl: string,
+    hubName: string,
     contentType: "application/json;charset=utf-8",
     body: string,
     options?: SendMessage$jsonOptionalParams
@@ -175,7 +355,7 @@ export class NotificationHubsClient extends NotificationHubsClientContext {
     if (args[1] === "application/octet-stream") {
       operationSpec = sendMessage$binaryOperationSpec;
       operationArguments = {
-        namespaceBaseUrl: args[0],
+        hubName: args[0],
         contentType: args[1],
         body: args[2],
         options: args[3]
@@ -184,7 +364,7 @@ export class NotificationHubsClient extends NotificationHubsClientContext {
     } else if (args[1] === "application/json;charset=utf-8") {
       operationSpec = sendMessage$jsonOperationSpec;
       operationArguments = {
-        namespaceBaseUrl: args[0],
+        hubName: args[0],
         contentType: args[1],
         body: args[2],
         options: args[3]
@@ -200,8 +380,262 @@ export class NotificationHubsClient extends NotificationHubsClientContext {
   }
 }
 // Operation Specifications
+const xmlSerializer = coreClient.createSerializer(Mappers, /* isXml */ true);
+
 const serializer = coreClient.createSerializer(Mappers, /* isXml */ false);
 
+const deleteNotificationHubOperationSpec: coreClient.OperationSpec = {
+  path: "/{hubName}",
+  httpMethod: "DELETE",
+  responses: { 200: {}, 400: {}, 401: {}, 404: {} },
+  queryParameters: [Parameters.apiVersion],
+  urlParameters: [Parameters.namespaceBaseUrl, Parameters.hubName],
+  headerParameters: [Parameters.xMsVersion, Parameters.authorization],
+  serializer
+};
+const getNotificationHubOperationSpec: coreClient.OperationSpec = {
+  path: "/{hubName}",
+  httpMethod: "GET",
+  responses: {
+    200: {
+      bodyMapper: Mappers.NotificationHubEntryModel
+    },
+    400: {},
+    401: {},
+    404: {}
+  },
+  queryParameters: [Parameters.apiVersion],
+  urlParameters: [Parameters.namespaceBaseUrl, Parameters.hubName],
+  headerParameters: [
+    Parameters.xMsVersion,
+    Parameters.authorization,
+    Parameters.accept
+  ],
+  isXML: true,
+  serializer: xmlSerializer
+};
+const createOrUpdateNotificationHubOperationSpec: coreClient.OperationSpec = {
+  path: "/{hubName}",
+  httpMethod: "PUT",
+  responses: {
+    201: {
+      bodyMapper: Mappers.NotificationHubEntryModel
+    },
+    400: {},
+    401: {},
+    403: {},
+    409: {}
+  },
+  requestBody: Parameters.body,
+  queryParameters: [Parameters.apiVersion],
+  urlParameters: [Parameters.namespaceBaseUrl, Parameters.hubName],
+  headerParameters: [
+    Parameters.xMsVersion,
+    Parameters.authorization,
+    Parameters.contentType,
+    Parameters.accept1,
+    Parameters.ifMatch
+  ],
+  isXML: true,
+  contentType: "application/xml; charset=utf-8",
+  mediaType: "xml",
+  serializer: xmlSerializer
+};
+const getRegistrationsByTagOperationSpec: coreClient.OperationSpec = {
+  path: "/{hubName}/tags/{tag}/registrations",
+  httpMethod: "GET",
+  responses: {
+    200: {
+      bodyMapper: {
+        type: {
+          name: "Sequence",
+          element: {
+            type: { name: "Composite", className: "RegistrationEntryModel" }
+          }
+        },
+        serializedName: "RegistrationFeedModel",
+        xmlName: "feed",
+        xmlElementName: "entry",
+        xmlNamespace: "http://www.w3.org/2005/Atom"
+      },
+      headersMapper: Mappers.NotificationHubsClientGetRegistrationsByTagHeaders
+    },
+    401: {},
+    403: {},
+    404: {}
+  },
+  queryParameters: [
+    Parameters.apiVersion,
+    Parameters.continuationToken,
+    Parameters.top
+  ],
+  urlParameters: [
+    Parameters.namespaceBaseUrl,
+    Parameters.hubName,
+    Parameters.tag
+  ],
+  headerParameters: [
+    Parameters.xMsVersion,
+    Parameters.authorization,
+    Parameters.accept
+  ],
+  isXML: true,
+  serializer: xmlSerializer
+};
+const createRegistrationIdOperationSpec: coreClient.OperationSpec = {
+  path: "/{hubName}/registrationIDs",
+  httpMethod: "POST",
+  responses: {
+    201: {
+      headersMapper: Mappers.NotificationHubsClientCreateRegistrationIdHeaders
+    },
+    400: {},
+    401: {},
+    403: {}
+  },
+  queryParameters: [Parameters.apiVersion],
+  urlParameters: [Parameters.namespaceBaseUrl, Parameters.hubName],
+  headerParameters: [Parameters.xMsVersion, Parameters.authorization],
+  serializer
+};
+const getRegistrationsOperationSpec: coreClient.OperationSpec = {
+  path: "/{hubName}/registrations",
+  httpMethod: "GET",
+  responses: {
+    200: {
+      bodyMapper: {
+        type: {
+          name: "Sequence",
+          element: {
+            type: { name: "Composite", className: "RegistrationEntryModel" }
+          }
+        },
+        serializedName: "RegistrationFeedModel",
+        xmlName: "feed",
+        xmlElementName: "entry",
+        xmlNamespace: "http://www.w3.org/2005/Atom"
+      },
+      headersMapper: Mappers.NotificationHubsClientGetRegistrationsHeaders
+    },
+    401: {},
+    403: {},
+    404: {}
+  },
+  queryParameters: [
+    Parameters.apiVersion,
+    Parameters.continuationToken,
+    Parameters.top,
+    Parameters.filter
+  ],
+  urlParameters: [Parameters.namespaceBaseUrl, Parameters.hubName],
+  headerParameters: [
+    Parameters.xMsVersion,
+    Parameters.authorization,
+    Parameters.accept
+  ],
+  isXML: true,
+  serializer: xmlSerializer
+};
+const createRegistrationOperationSpec: coreClient.OperationSpec = {
+  path: "/{hubName}/registrations",
+  httpMethod: "POST",
+  responses: {
+    201: {
+      bodyMapper: Mappers.RegistrationEntryModel,
+      headersMapper: Mappers.NotificationHubsClientCreateRegistrationHeaders
+    },
+    400: {},
+    401: {},
+    403: {},
+    409: {}
+  },
+  queryParameters: [Parameters.apiVersion],
+  urlParameters: [Parameters.namespaceBaseUrl, Parameters.hubName],
+  headerParameters: [
+    Parameters.xMsVersion,
+    Parameters.authorization,
+    Parameters.accept
+  ],
+  isXML: true,
+  serializer: xmlSerializer
+};
+const deleteRegistrationOperationSpec: coreClient.OperationSpec = {
+  path: "/{hubName}/registrations/{registrationId}",
+  httpMethod: "DELETE",
+  responses: { 200: {}, 400: {}, 401: {}, 403: {}, 404: {}, 409: {}, 412: {} },
+  queryParameters: [Parameters.apiVersion],
+  urlParameters: [
+    Parameters.namespaceBaseUrl,
+    Parameters.hubName,
+    Parameters.registrationId
+  ],
+  headerParameters: [
+    Parameters.xMsVersion,
+    Parameters.authorization,
+    Parameters.ifMatch
+  ],
+  serializer
+};
+const getRegistrationOperationSpec: coreClient.OperationSpec = {
+  path: "/{hubName}/registrations/{registrationId}",
+  httpMethod: "GET",
+  responses: {
+    201: {
+      bodyMapper: Mappers.RegistrationEntryModel,
+      headersMapper: Mappers.NotificationHubsClientGetRegistrationHeaders
+    },
+    401: {},
+    403: {},
+    404: {}
+  },
+  queryParameters: [Parameters.apiVersion],
+  urlParameters: [
+    Parameters.namespaceBaseUrl,
+    Parameters.hubName,
+    Parameters.registrationId
+  ],
+  headerParameters: [
+    Parameters.xMsVersion,
+    Parameters.authorization,
+    Parameters.accept
+  ],
+  isXML: true,
+  serializer: xmlSerializer
+};
+const createOrUpdateRegistrationOperationSpec: coreClient.OperationSpec = {
+  path: "/{hubName}/registrations/{registrationId}",
+  httpMethod: "PUT",
+  responses: {
+    201: {
+      bodyMapper: Mappers.RegistrationEntryModel,
+      headersMapper:
+        Mappers.NotificationHubsClientCreateOrUpdateRegistrationHeaders
+    },
+    400: {},
+    401: {},
+    403: {},
+    404: {},
+    409: {},
+    410: {}
+  },
+  requestBody: Parameters.body1,
+  queryParameters: [Parameters.apiVersion],
+  urlParameters: [
+    Parameters.namespaceBaseUrl,
+    Parameters.hubName,
+    Parameters.registrationId
+  ],
+  headerParameters: [
+    Parameters.xMsVersion,
+    Parameters.authorization,
+    Parameters.contentType,
+    Parameters.accept1
+  ],
+  isXML: true,
+  contentType: "application/xml; charset=utf-8",
+  mediaType: "xml",
+  serializer: xmlSerializer
+};
 const deleteInstallationOperationSpec: coreClient.OperationSpec = {
   path: "/{hubName}/installations/{installationId}",
   httpMethod: "DELETE",
@@ -212,7 +646,7 @@ const deleteInstallationOperationSpec: coreClient.OperationSpec = {
     Parameters.hubName,
     Parameters.installationId
   ],
-  headerParameters: [Parameters.xMsVersion],
+  headerParameters: [Parameters.xMsVersion, Parameters.authorization],
   serializer
 };
 const getInstallationOperationSpec: coreClient.OperationSpec = {
@@ -236,8 +670,8 @@ const getInstallationOperationSpec: coreClient.OperationSpec = {
   ],
   headerParameters: [
     Parameters.xMsVersion,
-    Parameters.accept,
-    Parameters.authorization
+    Parameters.authorization,
+    Parameters.accept2
   ],
   serializer
 };
@@ -245,26 +679,7 @@ const patchInstallationOperationSpec: coreClient.OperationSpec = {
   path: "/{hubName}/installations/{installationId}",
   httpMethod: "PATCH",
   responses: { 204: {}, 400: {}, 401: {}, 403: {} },
-  requestBody: Parameters.body,
-  queryParameters: [Parameters.apiVersion],
-  urlParameters: [
-    Parameters.namespaceBaseUrl,
-    Parameters.hubName,
-    Parameters.installationId
-  ],
-  headerParameters: [
-    Parameters.xMsVersion,
-    Parameters.authorization,
-    Parameters.contentType
-  ],
-  mediaType: "json",
-  serializer
-};
-const createOrUpdateInstallationOperationSpec: coreClient.OperationSpec = {
-  path: "/{hubName}/installations/{installationId}",
-  httpMethod: "PUT",
-  responses: { 200: {}, 400: {}, 401: {}, 403: {} },
-  requestBody: Parameters.body1,
+  requestBody: Parameters.body2,
   queryParameters: [Parameters.apiVersion],
   urlParameters: [
     Parameters.namespaceBaseUrl,
@@ -275,6 +690,25 @@ const createOrUpdateInstallationOperationSpec: coreClient.OperationSpec = {
     Parameters.xMsVersion,
     Parameters.authorization,
     Parameters.contentType1
+  ],
+  mediaType: "json",
+  serializer
+};
+const createOrUpdateInstallationOperationSpec: coreClient.OperationSpec = {
+  path: "/{hubName}/installations/{installationId}",
+  httpMethod: "PUT",
+  responses: { 200: {}, 400: {}, 401: {}, 403: {} },
+  requestBody: Parameters.body3,
+  queryParameters: [Parameters.apiVersion],
+  urlParameters: [
+    Parameters.namespaceBaseUrl,
+    Parameters.hubName,
+    Parameters.installationId
+  ],
+  headerParameters: [
+    Parameters.xMsVersion,
+    Parameters.authorization,
+    Parameters.contentType2
   ],
   mediaType: "json",
   serializer
@@ -292,13 +726,13 @@ const sendMessage$binaryOperationSpec: coreClient.OperationSpec = {
     404: {},
     413: {}
   },
-  requestBody: Parameters.body2,
+  requestBody: Parameters.body4,
   queryParameters: [Parameters.apiVersion, Parameters.direct],
   urlParameters: [Parameters.namespaceBaseUrl, Parameters.hubName],
   headerParameters: [
     Parameters.xMsVersion,
     Parameters.authorization,
-    Parameters.contentType2,
+    Parameters.contentType3,
     Parameters.serviceBusNotificationDeviceHandle,
     Parameters.serviceBusNotificationFormat,
     Parameters.serviceBusNotificationTags,
@@ -328,13 +762,13 @@ const sendMessage$jsonOperationSpec: coreClient.OperationSpec = {
     404: {},
     413: {}
   },
-  requestBody: Parameters.body3,
+  requestBody: Parameters.body5,
   queryParameters: [Parameters.apiVersion, Parameters.direct],
   urlParameters: [Parameters.namespaceBaseUrl, Parameters.hubName],
   headerParameters: [
     Parameters.xMsVersion,
     Parameters.authorization,
-    Parameters.contentType3,
+    Parameters.contentType4,
     Parameters.serviceBusNotificationDeviceHandle,
     Parameters.serviceBusNotificationFormat,
     Parameters.serviceBusNotificationTags,

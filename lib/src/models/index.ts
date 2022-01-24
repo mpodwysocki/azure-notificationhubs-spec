@@ -8,6 +8,48 @@
 
 import * as coreClient from "@azure/core-client";
 
+export interface NotificationHubEntryModel {
+  content?: NotificationHubContentModel;
+}
+
+export interface NotificationHubContentModel {
+  type?: "application/xml";
+  notificationHubDescription?: NotificationHubDescriptionModel;
+}
+
+export interface NotificationHubDescriptionModel {
+  xmlnsI?: "http://www.w3.org/2001/XMLSchema-instance";
+  registrationTtl?: string;
+  location?: string;
+  apnsCredential?: PropertyBagModelItem[];
+  gcmCredential?: PropertyBagModelItem[];
+  wnsCredential?: PropertyBagModelItem[];
+  authorizationRules?: NotificationHubDescriptionModelAuthorizationRulesItem[];
+}
+
+export interface PropertyBagModelItem {
+  name?: string;
+  value?: string;
+}
+
+export interface NotificationHubDescriptionModelAuthorizationRulesItem {
+  iType?: "http://www.w3.org/2001/XMLSchema-instance";
+  claimType?: "SharedAccessAuthorizationRule";
+  claimValue?: string;
+  rights?: string[];
+  createdTime?: string;
+  modifiedTime?: string;
+  keyName?: string;
+  primaryKey?: string;
+  secondaryKey?: string;
+}
+
+export interface RegistrationEntryModel {
+  content?: NotificationHubContentModel;
+  xmlnsM?: "http://schemas.microsoft.com/ado/2007/08/dataservices/metadata";
+  mEtag?: string;
+}
+
 export interface InstallationModel {
   /** Installation Unique Identifier */
   installationId: string;
@@ -64,6 +106,117 @@ export interface InstallationPatchModelItem {
   op: InstallationPatchType;
   path: string;
   value?: string;
+}
+
+export interface RegistrationContentModel {
+  type?: "application/xml";
+  appleRegistrationDescription?: AppleRegistrationContentModel;
+  appleTemplateRegistrationDescription?: AppleTemplateRegistrationContentModel;
+  baiduRegistrationDescription?: BaiduRegistrationContentModel;
+  baiduTemplateRegistrationDescription?: BaiduTemplateRegistrationContentModel;
+  gcmRegistrationDescription?: GcmRegistrationContentModel;
+  gcmTemplateRegistrationDescription?: GcmTemplateRegistrationContentModel;
+  windowsRegistrationDescription?: WindowsRegistrationContentModel;
+  windowsTemplateRegistrationDescription?: WindowsTemplateRegistrationContentModel;
+}
+
+export interface AppleRegistrationContentModel {
+  xmlnsI?: "http://www.w3.org/2001/XMLSchema-instance";
+  tags?: string;
+  deviceToken: string;
+}
+
+export interface AppleTemplateRegistrationContentModel {
+  xmlnsI?: "http://www.w3.org/2001/XMLSchema-instance";
+  tags?: string;
+  deviceToken: string;
+  bodyTemplate: string;
+  expiry?: string;
+}
+
+export interface BaiduRegistrationContentModel {
+  xmlnsI?: "http://www.w3.org/2001/XMLSchema-instance";
+  tags?: string;
+  baiduUserId: string;
+  baiduChannelId: string;
+}
+
+export interface BaiduTemplateRegistrationContentModel {
+  xmlnsI?: "http://www.w3.org/2001/XMLSchema-instance";
+  tags?: string;
+  baiduUserId: string;
+  baiduChannelId: string;
+  bodyTemplate: string;
+}
+
+export interface GcmRegistrationContentModel {
+  xmlnsI?: "http://www.w3.org/2001/XMLSchema-instance";
+  tags?: string;
+  gcmRegistrationId?: string;
+}
+
+export interface GcmTemplateRegistrationContentModel {
+  xmlnsI?: "http://www.w3.org/2001/XMLSchema-instance";
+  tags?: string;
+  gcmRegistrationId: string;
+  bodyTemplate: string;
+}
+
+export interface WindowsRegistrationContentModel {
+  xmlnsI?: "http://www.w3.org/2001/XMLSchema-instance";
+  tags?: string;
+  channelUri: string;
+}
+
+export interface WindowsTemplateRegistrationContentModel {
+  xmlnsI?: "http://www.w3.org/2001/XMLSchema-instance";
+  tags?: string;
+  channelUri: string;
+  bodyTemplate: string;
+  wnsHeaders?: WindowsTemplateRegistrationContentModelWnsHeadersItem[];
+}
+
+export interface WindowsTemplateRegistrationContentModelWnsHeadersItem {
+  header?: string;
+  value?: string;
+}
+
+/** Defines headers for NotificationHubsClient_getRegistrationsByTag operation. */
+export interface NotificationHubsClientGetRegistrationsByTagHeaders {
+  /** Contains the token to continue the enumeration of registrations, in case there are more. */
+  xMSContinuationToken?: string;
+}
+
+/** Defines headers for NotificationHubsClient_createRegistrationId operation. */
+export interface NotificationHubsClientCreateRegistrationIdHeaders {
+  /** The location of the registration in the format: https://{namespace}.servicebus.windows.net/{NotificationHub}/registrations/<registrationId> */
+  contentLocation?: string;
+  /** Weak ETag */
+  eTag?: string;
+}
+
+/** Defines headers for NotificationHubsClient_getRegistrations operation. */
+export interface NotificationHubsClientGetRegistrationsHeaders {
+  /** Contains the token to continue the enumeration of registrations, in case there are more. */
+  xMSContinuationToken?: string;
+}
+
+/** Defines headers for NotificationHubsClient_createRegistration operation. */
+export interface NotificationHubsClientCreateRegistrationHeaders {
+  /** Weak ETag */
+  eTag?: string;
+}
+
+/** Defines headers for NotificationHubsClient_getRegistration operation. */
+export interface NotificationHubsClientGetRegistrationHeaders {
+  /** Weak ETag */
+  eTag?: string;
+}
+
+/** Defines headers for NotificationHubsClient_createOrUpdateRegistration operation. */
+export interface NotificationHubsClientCreateOrUpdateRegistrationHeaders {
+  /** Weak ETag */
+  eTag?: string;
 }
 
 /** Defines headers for NotificationHubsClient_getInstallation operation. */
@@ -181,6 +334,75 @@ export enum KnownApiVersionType {
 export type ApiVersionType = string;
 
 /** Optional parameters. */
+export interface DeleteNotificationHubOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Optional parameters. */
+export interface GetNotificationHubOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Contains response data for the getNotificationHub operation. */
+export type GetNotificationHubResponse = NotificationHubEntryModel;
+
+/** Optional parameters. */
+export interface CreateOrUpdateNotificationHubOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Contains response data for the createOrUpdateNotificationHub operation. */
+export type CreateOrUpdateNotificationHubResponse = NotificationHubEntryModel;
+
+/** Optional parameters. */
+export interface GetRegistrationsByTagOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Contains response data for the getRegistrationsByTag operation. */
+export type GetRegistrationsByTagResponse = NotificationHubsClientGetRegistrationsByTagHeaders &
+  RegistrationEntryModel[];
+
+/** Optional parameters. */
+export interface CreateRegistrationIdOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Contains response data for the createRegistrationId operation. */
+export type CreateRegistrationIdResponse = NotificationHubsClientCreateRegistrationIdHeaders;
+
+/** Optional parameters. */
+export interface GetRegistrationsOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Contains response data for the getRegistrations operation. */
+export type GetRegistrationsResponse = NotificationHubsClientGetRegistrationsHeaders &
+  RegistrationEntryModel[];
+
+/** Optional parameters. */
+export interface CreateRegistrationOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Contains response data for the createRegistration operation. */
+export type CreateRegistrationResponse = NotificationHubsClientCreateRegistrationHeaders &
+  RegistrationEntryModel;
+
+/** Optional parameters. */
+export interface DeleteRegistrationOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Optional parameters. */
+export interface GetRegistrationOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Contains response data for the getRegistration operation. */
+export type GetRegistrationResponse = NotificationHubsClientGetRegistrationHeaders &
+  RegistrationEntryModel;
+
+/** Optional parameters. */
+export interface CreateOrUpdateRegistrationOptionalParams
+  extends coreClient.OperationOptions {}
+
+/** Contains response data for the createOrUpdateRegistration operation. */
+export type CreateOrUpdateRegistrationResponse = NotificationHubsClientCreateOrUpdateRegistrationHeaders &
+  RegistrationEntryModel;
+
+/** Optional parameters. */
 export interface DeleteInstallationOptionalParams
   extends coreClient.OperationOptions {}
 
@@ -216,6 +438,14 @@ export interface NotificationHubsClientOptionalParams
   extends coreClient.ServiceClientOptions {
   /** Api Version */
   apiVersion?: string;
+  /** ETag as returned by creation, update, and retrieval, or * (overwrite). */
+  ifMatch?: string;
+  /** Contains the token to continue the enumeration of registrations, in case there are more. */
+  continuationToken?: string;
+  /** OData top parameter */
+  top?: string;
+  /** OData filter parameter */
+  filter?: string;
   /** Device handle for the PNS */
   serviceBusNotificationDeviceHandle?: string;
   /** Notification message tags for targeting */
